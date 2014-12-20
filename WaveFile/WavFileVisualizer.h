@@ -16,9 +16,10 @@ private:
   double m_mastab;
   unsigned int m_vis_p_count; //visualization points count. (paint window width in pixels or another points)
 
-  word_t **m_lppChannelsData; //quantizied
+  double **m_lppChannelData;
+  word_t **m_lppVisChannelsData; //quantizied
 
-  void FreeChannelsData();
+  void FreeVisChannelsData();
 
 public:  
   explicit CWavFileVisualizer(CWavFile *lpWf);
@@ -54,7 +55,7 @@ public:
     if (mastab < MIN_MASTAB) m_mastab = MIN_MASTAB;
   }
 
-  word_t **ChannelsData() const{ return m_lppChannelsData;}
+  word_t **ChannelsData() const{ return m_lppVisChannelsData;}
 };
 
 #endif // WAVFILEVISUALIZER_H

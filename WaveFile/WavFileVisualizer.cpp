@@ -8,25 +8,63 @@ CWavFileVisualizer::CWavFileVisualizer(CWavFile *lpWf)
     m_end_sec(m_lpWf->RecordTimeSec()),
     m_mastab(1.0),
     m_vis_p_count(0),
-    m_lppChannelsData(NULL)
+    m_lppChannelData(NULL),
+    m_lppVisChannelsData(NULL)
 {
-  m_lppChannelsData = new word_t*[lpWf->Header()->fmt.options.numChannels];
-  for (int i = 0; i < lpWf->Header()->fmt.options.numChannels; ++i)
-    m_lppChannelsData[i] = NULL;
+  m_lppVisChannelsData = new word_t*[lpWf->Header()->fmt.options.numChannels];
+  m_lppChannelData = new double*[lpWf->Header()->fmt.options.numChannels];
+
+  //init visualization channel data
+  for (int i = 0; i < lpWf->Header()->fmt.options.numChannels; ++i) {
+    m_lppVisChannelsData[i] = NULL;
+  }
+  //
+
+  //init channel data
+  int len = (lpWf->Header()->data.header.chunkSize / lpWf->Header()->fmt.options.numChannels);
+
+  if (lpWf->BytesPerSample() == 1) {
+
+    for (int i = 0; i < lpWf->Header()->fmt.options.numChannels; ++i) {
+      m_lppChannelData[i] = new double[len];
+      for (int j = 0; j < len; ++j) {
+        m_lppChannelData[i][j] = lpWf->Data().ubPtr[j * lpWf->Header()->fmt.options.numChannels + i];
+      }
+    }
+  }
+  else if (lpWf->BytesPerSample() == 2) {
+    len /= 2;
+    for (int i = 0; i < lpWf->Header()->fmt.options.numChannels; ++i) {
+      m_lppChannelData[i] = new double[len];
+      for (int j = 0; j < len; ++j) {
+        m_lppChannelData[i][j] = lpWf->Data().wPtr[j * lpWf->Header()->fmt.options.numChannels + i];
+      }
+    }
+  }
+  else {
+    throw -1;
+  }
+  //
 }
 
 CWavFileVisualizer::~CWavFileVisualizer()
 {
-  FreeChannelsData();
+  FreeVisChannelsData();
+  if (m_lppChannelData) {
+    for (int i = 0; i < m_lpWf->Header()->fmt.options.numChannels; ++i)
+      delete [] m_lppChannelData[i];
+    delete [] m_lppChannelData;
+    m_lppChannelData = NULL;
+  }
 }
 
-void CWavFileVisualizer::FreeChannelsData()
+void CWavFileVisualizer::FreeVisChannelsData()
 {
-  if (m_lppChannelsData) {
+  if (m_lppVisChannelsData) {
     for (int i = 0; i < m_lpWf->Header()->fmt.options.numChannels; ++i)
-      delete [] m_lppChannelsData[i];
-    delete [] m_lppChannelsData;
-    m_lppChannelsData = NULL;
+      delete [] m_lppVisChannelsData[i];
+    delete [] m_lppVisChannelsData;
+    m_lppVisChannelsData = NULL;
   }
 }
 //////////////////////////////////////////////////////////////////////////
@@ -34,25 +72,13 @@ void CWavFileVisualizer::FreeChannelsData()
 int CWavFileVisualizer::RefreshChannelData()
 {
   int bStart, bEnd, diff;
-  bStart = m_lpWf->ByteOffsetBySec(m_start_sec);
-  bEnd = m_lpWf->ByteOffsetBySec(m_end_sec);
+  bStart = m_lpWf->ByteOffsetBySec(m_start_sec) / m_lpWf->Header()->fmt.options.numChannels / m_lpWf->BytesPerSample();
+  bEnd = m_lpWf->ByteOffsetBySec(m_end_sec) / m_lpWf->Header()->fmt.options.numChannels / m_lpWf->BytesPerSample();
+  diff = std::abs(bEnd - bStart);
 
-  if (m_lpWf->BytesPerSample() == 1) {
-    diff = std::abs(bEnd - bStart);
-    for (int i = 0; i < m_lpWf->Header()->fmt.options.numChannels; ++i) {
-      CCommons::MergeArrays<ubyte_t, word_t>(m_lpWf->Data().ubPtr + bStart, diff,
-                                             m_lppChannelsData[i], m_vis_p_count);
-    }
-  }
-  else if (m_lpWf->BytesPerSample() == 2) {
-    diff = std::abs(bEnd - bStart) / 2;
-    for (int i = 0; i < m_lpWf->Header()->fmt.options.numChannels; ++i) {
-      CCommons::MergeArrays<word_t, word_t>(m_lpWf->Data().wPtr + bStart, diff,
-                                            m_lppChannelsData[i], m_vis_p_count);
-    }
-  }
-  else {
-    return -1;
+  for (int i = 0; i < m_lpWf->Header()->fmt.options.numChannels; ++i) {
+    CCommons::MergeArrays<double, word_t>(&m_lppChannelData[i][bStart], diff,
+                                           m_lppVisChannelsData[i], m_vis_p_count);
   }
   return 0;
 }
@@ -60,10 +86,10 @@ int CWavFileVisualizer::RefreshChannelData()
 
 int CWavFileVisualizer::RecountChannelData()
 {
-  FreeChannelsData();
-  m_lppChannelsData = new word_t*[m_lpWf->Header()->fmt.options.numChannels];
+  FreeVisChannelsData();
+  m_lppVisChannelsData = new word_t*[m_lpWf->Header()->fmt.options.numChannels];
   for (int i = 0; i < m_lpWf->Header()->fmt.options.numChannels; ++i) {
-    m_lppChannelsData[i] = new word_t[m_vis_p_count];
+    m_lppVisChannelsData[i] = new word_t[m_vis_p_count];
   }
   return RefreshChannelData();
 }
