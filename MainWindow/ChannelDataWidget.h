@@ -24,6 +24,7 @@ public slots:
 protected:
   void paintEvent(QPaintEvent *e_paint);
   void resizeEvent(QResizeEvent *e_resize);
+  void mouseDoubleClickEvent(QMouseEvent *);
 };
 
 #endif // CHANNELDATAWIDGET_H

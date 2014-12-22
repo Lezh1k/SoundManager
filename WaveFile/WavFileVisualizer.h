@@ -7,17 +7,15 @@
 class CWavFileVisualizer {
 
 private:
-  static const double MIN_MASTAB  = 0.00001;
-  static const double MAX_MASTAB  = 10000;
-
   CWavFile* m_lpWf;  
   double m_start_sec;
   double m_end_sec;
-  double m_mastab;
+
   unsigned int m_vis_p_count; //visualization points count. (paint window width in pixels or another points)
 
   double **m_lppChannelData;
-  word_t **m_lppVisChannelsData; //quantizied
+  word_t **m_lppVisChannelsData; //quantizied  
+  double *m_chanelMaxVals;  //abs(val) . to count mastab
 
   void FreeVisChannelsData();
 
@@ -48,14 +46,8 @@ public:
   unsigned int vis_p_count() const {return m_vis_p_count;}
   void set_vis_p_count(int vis_p_count) {m_vis_p_count = vis_p_count;}
 
-  double mastab() const {return m_mastab;}
-  void set_mastab(double mastab) {
-    m_mastab = mastab;
-    if (mastab > MAX_MASTAB) m_mastab = MAX_MASTAB;
-    if (mastab < MIN_MASTAB) m_mastab = MIN_MASTAB;
-  }
-
   word_t **ChannelsData() const{ return m_lppVisChannelsData;}
+  double ChannelMax(int i) const {return m_chanelMaxVals[i];}
 };
 
 #endif // WAVFILEVISUALIZER_H
