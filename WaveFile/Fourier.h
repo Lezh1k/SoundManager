@@ -21,7 +21,9 @@ public:
   
   typedef std::complex<double> complex_double;
   static bool FFT( std::vector<complex_double> &a, bool inv ); //optimized i think :)
-  static bool FFT2(double *Rdat, double *Idat, int N, int LogN, bool inv); //best of the best of the best
+  static bool FFT_d(double *Rdat, double *Idat, int N, int LogN, bool inv); //best of the best of the best
+  static bool FFT_f(float *Rdat, float *Idat, int N, int LogN, bool inv); //best of the best of the best
+
 
   static unsigned int NextPowerOfTwo(unsigned int N) {
     --N;

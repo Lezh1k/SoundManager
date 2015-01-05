@@ -10,8 +10,7 @@
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow),
-  m_wavFile(NULL),
-  m_wavFileVisualizer(NULL)
+  m_wavFile(NULL)
 {
   ui->setupUi(this),
   connect(ui->m_mnuFileExit, SIGNAL(triggered()), this, SLOT(MnuFileExit_Clicked()));
@@ -21,22 +20,18 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow() {
   delete ui;
   if (m_wavFile) delete m_wavFile;
-  if (m_wavFileVisualizer) delete m_wavFileVisualizer;
 }
 //////////////////////////////////////////////////////////////////////////
 
 void MainWindow::ResetWavFile(const char *fileName)
 {
   if (m_wavFile) { delete m_wavFile; m_wavFile = NULL; }
-  if (m_wavFileVisualizer) {delete m_wavFileVisualizer; m_wavFileVisualizer = NULL;}
 
   m_wavFile = new CWavFile(fileName);
   if (m_wavFile->LastError() != WFE_SUCCESS) {
     //todo handle this.
     return;
-  }
-
-  m_wavFileVisualizer = new CWavFileVisualizer(m_wavFile);
+  }  
 
   while(ui->m_grdlChannels->count() > 0) {
     QWidget* widget = ui->m_grdlChannels->itemAt(0)->widget();
@@ -47,7 +42,8 @@ void MainWindow::ResetWavFile(const char *fileName)
   }
 
   for (int i = 0; i < m_wavFile->Header()->fmt.options.numChannels; ++i) {
-    ChannelDataWidget* widget = new ChannelDataWidget(m_wavFileVisualizer, i);
+    CWavFileChannelVisualizer *visualizer = new CWavFileChannelVisualizer(m_wavFile, i);
+    ChannelDataWidget* widget = new ChannelDataWidget(visualizer);
     ui->m_grdlChannels->addWidget(widget, i, 0);
   }
   ui->m_grdlChannels->invalidate();

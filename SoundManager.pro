@@ -17,8 +17,8 @@ SOURCES += main.cpp\
     Commons/Commons.cpp \
     WaveFile/WaveFile.cpp \
     WaveFile/Fourier.cpp \
-    WaveFile/WavFileVisualizer.cpp \
-    MainWindow/ChannelDataWidget.cpp
+    MainWindow/ChannelDataWidget.cpp \
+    WaveFile/WavFileChannelVisualizer.cpp
 
 HEADERS  += MainWindow/MainWindow.h \
     Commons/FileWrapper.h \
@@ -26,7 +26,7 @@ HEADERS  += MainWindow/MainWindow.h \
     WaveFile/WaveFileErrors.h \
     WaveFile/WaveFile.h \
     WaveFile/Fourier.h \
-    WaveFile/WavFileVisualizer.h \
-    MainWindow/ChannelDataWidget.h
+    MainWindow/ChannelDataWidget.h \
+    WaveFile/WavFileChannelVisualizer.h
 
 FORMS    += MainWindow/MainWindow.ui

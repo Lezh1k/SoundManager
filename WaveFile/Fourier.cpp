@@ -188,7 +188,7 @@ static double ICoef[CFourier::MAX_LOG2_N] = {
 
 #define  NUMBER_IS_2_POW_K(x)   ((!((x)&((x)-1)))&&((x)>1))  // x is pow(2, k), k=1,2, ...
 
-bool CFourier::FFT2(double *Rdat, double *Idat, int N, int LogN, bool inv)
+bool CFourier::FFT_d(double *Rdat, double *Idat, int N, int LogN, bool inv)
 {
   // parameters error check:
   assert(Rdat);
@@ -198,6 +198,102 @@ bool CFourier::FFT2(double *Rdat, double *Idat, int N, int LogN, bool inv)
 
   register int  i, j, n, k, io, ie, in, nn;
   double        ru, iu, rtp, itp, rtq, itq, rw, iw, sr;
+
+  nn = N >> 1;
+  ie = N; //N для каждого из уровней. для первого N. Для второго N/2 и т.д.
+  for(n=1; n<=LogN; n++) {
+    //rw и iw - поворотный коэффициент для LogN.
+    //w = -2.0 * M_PI / pow(2.0, n)
+    rw = RCoef[LogN - n]; //cos(w)
+    iw = ICoef[LogN - n]; //sin(w)
+
+    if(inv) iw = -iw; //комплексно сопряженное.
+
+    in = ie >> 1; //in - середина... N/2 для каждого уровня.
+
+    //ru и iu - используемый поворотный коэффициент
+    ru = 1.0;
+    iu = 0.0;
+
+    for(j=0; j<in; j++) {
+      for(i=j; i<N; i+=ie) {
+        io       = i + in; //io = i + N/2 для каждого из уровней...
+
+        //s(2k) = s0(k) + s1(k)
+        rtp      = Rdat[i]  + Rdat[io];
+        itp      = Idat[i]  + Idat[io];
+
+        //s0(k) - s1(k)
+        rtq      = Rdat[i]  - Rdat[io];
+        itq      = Idat[i]  - Idat[io];
+
+        //s(2k+1) = Wkn * (s0(k) - s1(k))
+        Rdat[io] = rtq * ru - itq * iu;
+        Idat[io] = itq * ru + rtq * iu;
+
+        Rdat[i]  = rtp;
+        Idat[i]  = itp;
+      }
+
+      sr = ru;
+      //Wk+1 = W*Wk
+      ru = ru * rw - iu * iw;
+      iu = iu * rw + sr * iw;
+    }
+
+    ie >>= 1;
+  }
+  //граф бабочка для всех уровней здесь уже завершен. дальше должна быть перестановка.
+
+  //nn = N/2
+  //bit-reversal permutation :)
+  for(j=i=1; i<N; i++) {
+
+    if(i < j) {
+      //swap dat[io] and dat[in].
+      io       = i - 1;
+      in       = j - 1;
+      rtp      = Rdat[in];
+      itp      = Idat[in];
+      Rdat[in] = Rdat[io];
+      Idat[in] = Idat[io];
+      Rdat[io] = rtp;
+      Idat[io] = itp;
+    }
+
+    k = nn;
+
+    while(k < j) {
+      j   = j - k;
+      k >>= 1;
+    }
+
+    j = j + k;
+  }
+  //перестановка завершена
+
+  if(inv) return true;
+
+  rw = 1.0 / N;
+
+  for(i=0; i<N; i++) {
+    Rdat[i] *= rw;
+    Idat[i] *= rw;
+  }
+
+  return true;
+}
+
+bool CFourier::FFT_f(float *Rdat, float *Idat, int N, int LogN, bool inv)
+{
+  // parameters error check:
+  assert(Rdat);
+  assert(Idat);
+  assert(NUMBER_IS_2_POW_K(N));
+  assert(LogN >= 2 && LogN <= MAX_LOG2_N);
+
+  register int  i, j, n, k, io, ie, in, nn;
+  float         ru, iu, rtp, itp, rtq, itq, rw, iw, sr;
 
   nn = N >> 1;
   ie = N; //N для каждого из уровней. для первого N. Для второго N/2 и т.д.

@@ -32,11 +32,13 @@ public:
   static inline ubyte_t GetByteWithReorderedBits(ubyte_t src);
   static int ReverseBits(unsigned int n, int lg_n);
 
+  static inline int RoundUpToNextN(int val, int N) { return (val + N-1) & -N;}
+
   template<class T> static void PrintBinary(T src) {
     int nBits = sizeof(T)*8;
     char *tmp = new char[nBits];
     for (int i = 0; i < nBits; i++, src>>=1)
-     tmp[i] = src&1;
+      tmp[i] = src&1;
     --nBits;
     for (nBits; nBits >= 0; --nBits)
       printf("%d", tmp[nBits]);
@@ -45,26 +47,21 @@ public:
   //////////////////////////////////////////////////////////////////////////
 
   template<class TSrc, class TDst> static void MergeArrays(register TSrc *lpSrc,
-                                    register int src_len,
-                                    register TDst *lpDst,
-                                    register int dst_len)
+                                                           register int src_len,
+                                                           register TDst *lpDst,
+                                                           register int dst_len)
   {
     register float coeff = (float)src_len / (float)dst_len;
     register float tmp = coeff;
     register int nTmp, i;
 
     while (--dst_len >= 0) {
-      while (tmp < 1.0) {
+      while (tmp < 1.0 && dst_len > 0) {
         lpDst[--dst_len] = 0.0;
         tmp+=coeff;
       }
       nTmp = (int)tmp;
 
-//      lpDst[dst_len] = 0.0;
-//      for (i = 0; i < nTmp; ++i) {
-//        lpDst[dst_len] += lpSrc[--src_len];
-//      }
-//      lpDst[dst_len] /= nTmp;
       double val = 0.0;
       for (i = 0; i < nTmp; ++i) {
         val += lpSrc[--src_len];

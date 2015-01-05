@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include "WaveFile/WaveFileErrors.h"
 #include "WaveFile/WaveFile.h"
-#include "WaveFile/WavFileVisualizer.h"
+#include "WaveFile/WavFileChannelVisualizer.h"
 
 namespace Ui {
   class MainWindow;
@@ -21,7 +21,6 @@ private:
   Ui::MainWindow *ui;
 
   CWavFile *m_wavFile;
-  CWavFileVisualizer *m_wavFileVisualizer;
 
   void ResetWavFile(const char* fileName);
 
