@@ -19,6 +19,12 @@ typedef long       qword_t;
 
 #include <stdio.h>
 
+typedef struct CVisSize
+{
+  unsigned int width, height;
+  CVisSize(unsigned int w, unsigned int h) : width(w), height(h){}
+} CVisSize;
+
 class CCommons {
 private:
   CCommons(void);

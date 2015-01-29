@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QFrame>
+#include <QImage>
+#include <QPainter>
 #include "WaveFile/WavFileChannelVisualizer.h"
 
 class ChannelDataWidget : public QFrame
@@ -15,6 +17,11 @@ public:
 
 private:  
   CWavFileChannelVisualizer* m_lpWfVis;
+  int m_lastX;  
+
+  enum LBTN_STATE {
+    BS_UP, BS_DOWN
+  } m_lBtnState;  
 
 signals:
 
@@ -22,10 +29,12 @@ public slots:
 
   // QWidget interface
 protected:
-  void paintEvent(QPaintEvent *e_paint);
-  void resizeEvent(QResizeEvent *e_resize);
-  void mouseDoubleClickEvent(QMouseEvent *mouse_event);
-  void mouseReleaseEvent(QMouseEvent *mouse_event);
+  virtual void paintEvent(QPaintEvent *e_paint);
+  virtual void resizeEvent(QResizeEvent *e_resize);
+  virtual void mouseDoubleClickEvent(QMouseEvent *mouse_event);
+  virtual void mouseReleaseEvent(QMouseEvent *mouse_event);
+  virtual void mousePressEvent(QMouseEvent *mouse_event);
+  virtual void mouseMoveEvent(QMouseEvent *mouse_event);
 };
 
 #endif // CHANNELDATAWIDGET_H

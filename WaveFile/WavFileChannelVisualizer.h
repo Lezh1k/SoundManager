@@ -4,11 +4,6 @@
 #include "WaveFile.h"
 #include "Commons/Commons.h"
 
-typedef struct CVisSize
-{
-  unsigned int width, height;
-  CVisSize(unsigned int w, unsigned int h) : width(w), height(h){}
-}CVisSize;
 
 class CWavFileChannelVisualizer {
 
@@ -22,6 +17,9 @@ private:
   word_t *m_lpVisChannelsData; //quantizied
   double m_chanelMaxVal;  //abs(val) . to count mastab
   int m_channelNumber;
+  double m_timePerPixel;
+
+  void ResetTimePerPixel(void);
 
 public:  
   CWavFileChannelVisualizer(CWavFile *lpWf, int channelNum);
@@ -40,8 +38,16 @@ public:
   void set_size(unsigned int width, unsigned int height);
   void set_size(const CVisSize& visSize);
 
+  unsigned int vis_width(void) const {return m_visSize.width;}
+  unsigned int vis_height(void) const {return m_visSize.height;}
+
+  double time_per_pixel() const {return m_timePerPixel;}
+
   word_t *ChannelsData() const {return m_lpVisChannelsData;}
   double ChannelMax() const {return m_chanelMaxVal;}
+
+  double min_time() const {return 0.0;}
+  double max_time() const {return m_lpWf->RecordTimeSec();}
 };
 
 #endif // WAVFILEVISUALIZER_H

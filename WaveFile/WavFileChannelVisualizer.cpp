@@ -2,7 +2,6 @@
 #include "Commons/Commons.h"
 #include "WaveFile/Fourier.h"
 
-
 CWavFileChannelVisualizer::CWavFileChannelVisualizer(CWavFile *lpWf, int channelNum)
   : m_lpWf(lpWf),
     m_start_sec(0.0),
@@ -11,7 +10,8 @@ CWavFileChannelVisualizer::CWavFileChannelVisualizer(CWavFile *lpWf, int channel
     m_lpChannelData(NULL),
     m_lpVisChannelsData(NULL),
     m_chanelMaxVal(0.0),
-    m_channelNumber(channelNum)
+    m_channelNumber(channelNum),
+    m_timePerPixel(0.0)
 {
   //init channel data
   int len = (lpWf->Header()->data.header.chunkSize / lpWf->Header()->fmt.options.numChannels);
@@ -93,6 +93,7 @@ void CWavFileChannelVisualizer::set_time(double start_sec, double end_sec)
     if (end_sec > m_lpWf->RecordTimeSec()) m_end_sec = m_lpWf->RecordTimeSec();
   }
 
+  ResetTimePerPixel();
   RefreshChannelData();
 }
 //////////////////////////////////////////////////////////////////////////
@@ -102,15 +103,19 @@ void CWavFileChannelVisualizer::set_size(unsigned int width, unsigned int height
   bool recount = m_visSize.width != width;
   m_visSize.width = width;
   m_visSize.height = height;
+  ResetTimePerPixel();
   if (recount) RecountChannelData();
   else RefreshChannelData();
 }
 
 void CWavFileChannelVisualizer::set_size(const CVisSize &visSize)
 {
-  bool recount = m_visSize.width != visSize.width;
-  m_visSize = visSize;
-  if (recount) RecountChannelData();
-  else RefreshChannelData();
+  set_size(visSize.width, visSize.height);
+}
+//////////////////////////////////////////////////////////////////////////
+
+void CWavFileChannelVisualizer::ResetTimePerPixel()
+{
+  m_timePerPixel = (m_end_sec - m_start_sec) / m_visSize.width;
 }
 //////////////////////////////////////////////////////////////////////////

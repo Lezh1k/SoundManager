@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     WaveFile/WaveFile.cpp \
     WaveFile/Fourier.cpp \
     MainWindow/ChannelDataWidget.cpp \
-    WaveFile/WavFileChannelVisualizer.cpp
+    WaveFile/WavFileChannelVisualizer.cpp \
+    MainWindow/ChannelSpectrogramWidget.cpp \
+    WaveFile/WaveFileSpectrogramVisualizer.cpp
 
 HEADERS  += MainWindow/MainWindow.h \
     Commons/FileWrapper.h \
@@ -27,6 +29,8 @@ HEADERS  += MainWindow/MainWindow.h \
     WaveFile/WaveFile.h \
     WaveFile/Fourier.h \
     MainWindow/ChannelDataWidget.h \
-    WaveFile/WavFileChannelVisualizer.h
+    WaveFile/WavFileChannelVisualizer.h \
+    MainWindow/ChannelSpectrogramWidget.h \
+    WaveFile/WaveFileSpectrogramVisualizer.h
 
 FORMS    += MainWindow/MainWindow.ui
