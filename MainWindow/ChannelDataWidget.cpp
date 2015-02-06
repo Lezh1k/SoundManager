@@ -36,7 +36,7 @@ void ChannelDataWidget::paintEvent(QPaintEvent *e_paint)
 }
 //////////////////////////////////////////////////////////////////////////
 
-void ChannelDataWidget::resizeEvent(QResizeEvent *e_resize)
+void ChannelDataWidget::resizeEvent(QResizeEvent */*e_resize*/)
 {
   m_lpWfVis->set_size(this->size().width(), this->size().height());
 }
@@ -54,7 +54,7 @@ void ChannelDataWidget::mouseDoubleClickEvent(QMouseEvent *mouse_event)
 }
 //////////////////////////////////////////////////////////////////////////
 
-void ChannelDataWidget::mouseReleaseEvent(QMouseEvent *mouse_event)
+void ChannelDataWidget::mouseReleaseEvent(QMouseEvent */*mouse_event*/)
 {
   m_lBtnState = BS_UP;
 }

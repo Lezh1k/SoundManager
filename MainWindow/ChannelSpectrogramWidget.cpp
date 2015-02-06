@@ -27,8 +27,7 @@ void ChannelSpectrogramWidget::paintEvent(QPaintEvent *pe)
 }
 /////////////////////////////////////////////////////////////////////////
 
-void ChannelSpectrogramWidget::resizeEvent(QResizeEvent *re)
+void ChannelSpectrogramWidget::resizeEvent(QResizeEvent */*re*/)
 {
-
 }
 /////////////////////////////////////////////////////////////////////////

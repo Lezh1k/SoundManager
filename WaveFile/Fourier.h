@@ -6,6 +6,20 @@
 #include <vector>
 #include "Commons/Commons.h"
 
+typedef struct CFtItem
+{
+  double frequency;
+  double amplitude;
+
+  CFtItem(void):frequency(0.0), amplitude(0.0){}
+  //frequency = (i * inputFrequency) / (m_numSamples);
+  //i - номер элемента. inputFrequency - wf.header.opt.sampleRate. numSamples - количество отчетов.
+  CFtItem(double rp, double ip, double frequency):
+    frequency(frequency),
+    amplitude(sqrt(rp*rp + ip*ip)) {}  
+} CFtItem;
+/////////////////////////////////////////////////////////////////////////
+
 class CFourier {
 public:
   static const int MAX_LOG2_N = 32;

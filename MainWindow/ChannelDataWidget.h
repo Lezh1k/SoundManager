@@ -30,9 +30,9 @@ public slots:
   // QWidget interface
 protected:
   virtual void paintEvent(QPaintEvent *e_paint);
-  virtual void resizeEvent(QResizeEvent *e_resize);
+  virtual void resizeEvent(QResizeEvent */*e_resize*/);
   virtual void mouseDoubleClickEvent(QMouseEvent *mouse_event);
-  virtual void mouseReleaseEvent(QMouseEvent *mouse_event);
+  virtual void mouseReleaseEvent(QMouseEvent */*mouse_event*/);
   virtual void mousePressEvent(QMouseEvent *mouse_event);
   virtual void mouseMoveEvent(QMouseEvent *mouse_event);
 };

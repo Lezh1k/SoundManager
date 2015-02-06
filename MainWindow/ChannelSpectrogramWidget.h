@@ -17,7 +17,7 @@ private:
   // QWidget interface
 protected:
   virtual void paintEvent(QPaintEvent *pe);
-  virtual void resizeEvent(QResizeEvent *re);
+  virtual void resizeEvent(QResizeEvent */*re*/);
 };
 
 #endif // CHANNELSPECTROGRAMWIDGET_H

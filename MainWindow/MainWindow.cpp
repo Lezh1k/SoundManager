@@ -43,9 +43,9 @@ void MainWindow::ResetWavFile(const char *fileName)
   }
 
   for (int i = 0; i < m_wavFile->Header()->fmt.options.numChannels; ++i) {
-    CWavFileChannelVisualizer *visualizer = new CWavFileChannelVisualizer(m_wavFile, i);
-    CWaveFileSpectrogramVisualizer *spVisualizer = new CWaveFileSpectrogramVisualizer(m_wavFile, i);
+    CWavFileChannelVisualizer *visualizer = new CWavFileChannelVisualizer(m_wavFile, i);    
     ChannelDataWidget* widget = new ChannelDataWidget(visualizer);
+    CWaveFileSpectrogramVisualizer spectrumVisualizer(m_wavFile, i);
     ui->m_grdlChannels->addWidget(widget, i, 0);
   }
   ui->m_grdlChannels->invalidate();

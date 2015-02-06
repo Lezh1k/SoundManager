@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = SoundManager
 TEMPLATE = app
 
+QMAKE_CFLAGS_WARN_ON -= -W3
+QMAKE_CFLAGS_WARN_ON += -W4
 
 SOURCES += main.cpp\
         MainWindow/MainWindow.cpp \
@@ -31,6 +33,7 @@ HEADERS  += MainWindow/MainWindow.h \
     MainWindow/ChannelDataWidget.h \
     WaveFile/WavFileChannelVisualizer.h \
     MainWindow/ChannelSpectrogramWidget.h \
-    WaveFile/WaveFileSpectrogramVisualizer.h
+    WaveFile/WaveFileSpectrogramVisualizer.h \
+    WaveFile/FFTWindow.h
 
 FORMS    += MainWindow/MainWindow.ui
