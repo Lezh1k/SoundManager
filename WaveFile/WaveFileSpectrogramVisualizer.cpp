@@ -53,15 +53,17 @@ void CWaveFileSpectrogramVisualizer::InitChannelData(void)
 {
   m_rChannelData = new double[m_mem_len];
   m_iChannelData = new double[m_mem_len];
+  int step = m_lpWf->Header()->fmt.options.numChannels * m_lpWf->BytesPerSample();
+
   if (m_lpWf->BytesPerSample() == 1) {
-    for (int i = 0; i < m_real_len; ++i) {
-      m_rChannelData[i] = m_lpWf->Data().ubPtr[i * m_lpWf->Header()->fmt.options.numChannels + m_channelNumber] * m_windows[i];
-    }
+    ubyte_t* start = &m_lpWf->Data().ubPtr[m_channelNumber];
+    for (int i = 0; i < m_real_len; ++i, start += step)
+      m_rChannelData[i] = (*start) * m_windows[i];
   }
   else if (m_lpWf->BytesPerSample() == 2) {
-    for (int i = 0; i < m_real_len; ++i) {
-      m_rChannelData[i] = m_lpWf->Data().wPtr[i * m_lpWf->Header()->fmt.options.numChannels + m_channelNumber] * m_windows[i];
-    }
+    word_t* start = &m_lpWf->Data().wPtr[m_channelNumber];
+    for (int i = 0; i < m_real_len; ++i, start += step)
+      m_rChannelData[i] = (*start) * m_windows[i];
   }
 
   for (int i = 0 ; i < m_real_len; ++i)
@@ -109,7 +111,7 @@ void CWaveFileSpectrogramVisualizer::InitFFTData(void)
     double freqStep = ((double)m_lpWf->Header()->fmt.options.sampleRate) / m_dt;
     for (int j = 0; j < n_fft; ++j, freq += freqStep) {
       m_ftData[i][j].amplitude = sqrt(m_rTmp[j]*m_rTmp[j] + m_iTmp[j]*m_iTmp[j]);
-      m_ftData[i][j].frequency = freq;      
+      m_ftData[i][j].frequency = freq;
     }
   }
 }

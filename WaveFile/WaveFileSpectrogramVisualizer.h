@@ -45,6 +45,9 @@ public:
   int PartElemCount(void) const {return m_dt;}  
 
   CFtItem ** FtData(void) const {return m_ftData;}
+
+  int Dt(void) const {return m_dt;}
+  int NDt(void) const {return m_nDt;}
 };
 
 #endif // CWAVEFILESPECTROGRAMVISUALIZER_H
