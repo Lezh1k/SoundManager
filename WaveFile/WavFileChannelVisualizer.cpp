@@ -15,18 +15,17 @@ CWavFileChannelVisualizer::CWavFileChannelVisualizer(CWavFile *lpWf, int channel
 {
   //init channel data
   int len = (lpWf->Header()->data.header.chunkSize / lpWf->Header()->fmt.options.numChannels);
+  len /= lpWf->BytesPerSample();
+  m_lpChannelData = new double[CFourier::NextPowerOfTwo(len)];
 
   if (lpWf->BytesPerSample() == 1) {
-    m_lpChannelData = new double[CFourier::NextPowerOfTwo(len)];
-    for (int j = 0; j < len; ++j) {
-      m_lpChannelData[j] = lpWf->Data().ubPtr[j * lpWf->Header()->fmt.options.numChannels + m_channelNumber];
+    for (int i = 0, index = m_channelNumber; i < len; ++i, index+=lpWf->Header()->fmt.options.numChannels) {
+      m_lpChannelData[i] = lpWf->Data().ubPtr[index];
     }
   }
   else if (lpWf->BytesPerSample() == 2) {
-    len /= 2;
-    m_lpChannelData = new double[CFourier::NextPowerOfTwo(len)];
-    for (int j = 0; j < len; ++j) {
-      m_lpChannelData[j] = lpWf->Data().wPtr[j * lpWf->Header()->fmt.options.numChannels + m_channelNumber];
+    for (int i = 0, index = m_channelNumber; i < len; ++i, index+=lpWf->Header()->fmt.options.numChannels) {
+      m_lpChannelData[i] = lpWf->Data().wPtr[index];
     }
   }
   //
@@ -54,6 +53,7 @@ int CWavFileChannelVisualizer::RefreshChannelData()
 {
   int bStart, bEnd, diff;
   double coeff = 1.0 / (m_lpWf->Header()->fmt.options.numChannels * m_lpWf->BytesPerSample());
+
   bStart = m_lpWf->ByteOffsetBySec(m_start_sec) * coeff;
   bEnd = m_lpWf->ByteOffsetBySec(m_end_sec) * coeff;
   diff = std::abs(bEnd - bStart);
@@ -62,18 +62,19 @@ int CWavFileChannelVisualizer::RefreshChannelData()
                                         m_lpVisChannelsData, m_visSize.width);
 
   m_chanelMaxVal = m_lpVisChannelsData[0];
-  for (unsigned j = 0; j < m_visSize.width; ++j) {
+  for (unsigned j = 0; j < m_visSize.width; ++j) {    
     if (m_chanelMaxVal < std::abs(m_lpVisChannelsData[j]))
       m_chanelMaxVal = std::abs(m_lpVisChannelsData[j]);
   }
+
   return 0;
 }
 //////////////////////////////////////////////////////////////////////////
+
 int CWavFileChannelVisualizer::RecountChannelData()
 {  
-  if (m_lpVisChannelsData != NULL) {
+  if (m_lpVisChannelsData)
     delete [] m_lpVisChannelsData;
-  }
   m_lpVisChannelsData = new word_t[m_visSize.width];
   return RefreshChannelData();
 }
@@ -81,17 +82,11 @@ int CWavFileChannelVisualizer::RecountChannelData()
 
 void CWavFileChannelVisualizer::set_time(double start_sec, double end_sec)
 {
-  if (m_start_sec != start_sec) {
-    m_start_sec = start_sec;
-    if (start_sec < 0.0) m_start_sec = 0.0;
-    if (start_sec > m_lpWf->RecordTimeSec()) m_start_sec = m_lpWf->RecordTimeSec();
-  }
-
-  if (m_end_sec != end_sec) {
-    m_end_sec = end_sec;
-    if (end_sec < m_start_sec) m_end_sec = m_start_sec;
-    if (end_sec > m_lpWf->RecordTimeSec()) m_end_sec = m_lpWf->RecordTimeSec();
-  }
+  //too many checks.
+  if (m_start_sec != start_sec)
+    m_start_sec = std::min(std::max(start_sec, 0.0), max_time());
+  if (m_end_sec != end_sec)
+    m_end_sec = std::max(0.0, std::min(end_sec, max_time()));
 
   ResetTimePerPixel();
   RefreshChannelData();

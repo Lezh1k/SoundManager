@@ -47,8 +47,10 @@ void ChannelDataWidget::mouseDoubleClickEvent(QMouseEvent *mouse_event)
   double diff = m_lpWfVis->end_sec() - m_lpWfVis->start_sec();  
   const double center_sec =
       mouse_event->pos().x() * (diff / m_lpWfVis->vis_width());
+
   if (mouse_event->button() == Qt::LeftButton)
     diff /= 4.0;
+
   m_lpWfVis->set_time(center_sec - diff, center_sec + diff);
   this->update();
 }
@@ -72,19 +74,22 @@ void ChannelDataWidget::mousePressEvent(QMouseEvent *mouse_event)
 void ChannelDataWidget::mouseMoveEvent(QMouseEvent *mouse_event)
 {  
   if (m_lBtnState == BS_UP) return;
-  mouse_event->accept();
-  double diff = (mouse_event->x() - m_lastX) * m_lpWfVis->time_per_pixel();
-  double start_time = m_lpWfVis->start_sec() - diff;
-  if (start_time > m_lpWfVis->min_time()) {
+  //mouse_event->accept();
+  do {
+    double diff = (mouse_event->x() - m_lastX) * m_lpWfVis->time_per_pixel();
+    double start_time = m_lpWfVis->start_sec() - diff;
+    if (start_time <= m_lpWfVis->min_time()) {
+      m_lpWfVis->set_time(m_lpWfVis->min_time(), m_lpWfVis->vis_width()*m_lpWfVis->time_per_pixel());
+      break;
+    }
     double end_time = m_lpWfVis->end_sec() - diff;
-    if (end_time <= m_lpWfVis->max_time())
-      m_lpWfVis->set_time(start_time, end_time);
-    else
-      m_lpWfVis->set_time(end_time - m_lpWfVis->time_per_pixel()*m_lpWfVis->vis_width(), end_time);
-  }
-  else
-    m_lpWfVis->set_time(0.0, m_lpWfVis->time_per_pixel() * m_lpWfVis->vis_width());
-
+    if (end_time >= m_lpWfVis->max_time()) {
+      m_lpWfVis->set_time(m_lpWfVis->max_time() - m_lpWfVis->vis_width()*m_lpWfVis->time_per_pixel(),
+                          m_lpWfVis->max_time());
+      break;
+    }
+    m_lpWfVis->set_time(start_time, end_time);
+  } while (0);
   m_lastX = mouse_event->x();
   this->update();
 }

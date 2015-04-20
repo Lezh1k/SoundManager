@@ -22,7 +22,7 @@ private:
 
   CWavFile *m_wavFile;
 
-  void ResetWavFile(const char* fileName);
+  void ResetWavFile(const std::string& fileName);
 
 private slots:
   void MnuFileExit_Clicked(void);

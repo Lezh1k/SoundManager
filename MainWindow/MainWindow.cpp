@@ -24,11 +24,11 @@ MainWindow::~MainWindow() {
 }
 //////////////////////////////////////////////////////////////////////////
 
-void MainWindow::ResetWavFile(const char *fileName)
+void MainWindow::ResetWavFile(const std::string &fileName)
 {
   if (m_wavFile) { delete m_wavFile; m_wavFile = NULL; }
 
-  m_wavFile = new CWavFile(fileName);
+  m_wavFile = new CWavFile(fileName.c_str());
   if (m_wavFile->LastError() != WFE_SUCCESS) {
     //todo handle this.
     return;
@@ -44,8 +44,7 @@ void MainWindow::ResetWavFile(const char *fileName)
 
   for (int i = 0; i < m_wavFile->Header()->fmt.options.numChannels; ++i) {
     CWavFileChannelVisualizer *visualizer = new CWavFileChannelVisualizer(m_wavFile, i);    
-    ChannelDataWidget* widget = new ChannelDataWidget(visualizer);
-    CWaveFileSpectrogramVisualizer spectrumVisualizer(m_wavFile, i);
+    ChannelDataWidget* widget = new ChannelDataWidget(visualizer);    
     ui->m_grdlChannels->addWidget(widget, i, 0);
   }
   ui->m_grdlChannels->invalidate();
@@ -62,9 +61,7 @@ void MainWindow::MnuFileOpen_Clicked() {
                                                   tr("Open wav file"),
                                                   QString(),
                                                   tr("Sound Files (*.wav *.wave)"));
-  if (fileName.isEmpty())
-    return;
-  const char* strFileName = fileName.toStdString().c_str();
-  ResetWavFile(strFileName);
+  if (fileName.isEmpty()) return;
+  ResetWavFile(fileName.toStdString());
 }
 //////////////////////////////////////////////////////////////////////////
