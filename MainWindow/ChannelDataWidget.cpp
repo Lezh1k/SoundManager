@@ -74,7 +74,7 @@ void ChannelDataWidget::mousePressEvent(QMouseEvent *mouse_event)
 void ChannelDataWidget::mouseMoveEvent(QMouseEvent *mouse_event)
 {  
   if (m_lBtnState == BS_UP) return;
-  //mouse_event->accept();
+
   do {
     double diff = (mouse_event->x() - m_lastX) * m_lpWfVis->time_per_pixel();
     double start_time = m_lpWfVis->start_sec() - diff;
@@ -92,5 +92,6 @@ void ChannelDataWidget::mouseMoveEvent(QMouseEvent *mouse_event)
   } while (0);
   m_lastX = mouse_event->x();
   this->update();
+  mouse_event->accept();
 }
 //////////////////////////////////////////////////////////////////////////
