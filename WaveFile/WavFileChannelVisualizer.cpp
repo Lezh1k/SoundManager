@@ -2,16 +2,16 @@
 #include "Commons/Commons.h"
 #include "WaveFile/Fourier.h"
 
-CWavFileChannelVisualizer::CWavFileChannelVisualizer(CWavFile *lpWf, int channelNum)
-  : m_lpWf(lpWf),
-    m_start_sec(0.0),
-    m_end_sec(m_lpWf->RecordTimeSec()),
-    m_visSize(0, 0),
-    m_lpChannelData(NULL),
-    m_lpVisChannelsData(NULL),
-    m_chanelMaxVal(0.0),
-    m_channelNumber(channelNum),
-    m_timePerPixel(0.0)
+CWavFileChannelVisualizer::CWavFileChannelVisualizer(CWavFile *lpWf, int channelNum) :
+  m_lpWf(lpWf),
+  m_start_sec(0.0),
+  m_end_sec(m_lpWf->RecordTimeSec()),
+  m_visSize(0, 0),
+  m_lpChannelData(NULL),
+  m_lpVisChannelsData(NULL),
+  m_channelMaxVal(0.0),
+  m_channelNumber(channelNum),
+  m_timePerPixel(0.0)
 {
   //init channel data
   int len = (lpWf->Header()->data.header.chunkSize / lpWf->Header()->fmt.options.numChannels);
@@ -61,10 +61,10 @@ int CWavFileChannelVisualizer::RefreshChannelData()
   CCommons::MergeArrays<double, word_t>(&m_lpChannelData[bStart], diff,
                                         m_lpVisChannelsData, m_visSize.width);
 
-  m_chanelMaxVal = m_lpVisChannelsData[0];
-  for (unsigned j = 0; j < m_visSize.width; ++j) {    
-    if (m_chanelMaxVal < std::abs(m_lpVisChannelsData[j]))
-      m_chanelMaxVal = std::abs(m_lpVisChannelsData[j]);
+  m_channelMaxVal = m_lpVisChannelsData[0];
+  for (unsigned j = 0; j < m_visSize.width; ++j) {
+    if (m_channelMaxVal < std::abs(m_lpVisChannelsData[j]))
+      m_channelMaxVal = std::abs(m_lpVisChannelsData[j]);
   }
 
   return 0;

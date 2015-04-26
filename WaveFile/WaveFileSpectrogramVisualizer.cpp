@@ -1,16 +1,16 @@
 #include <memory>
+#include <cstring>
 #include <assert.h>
 #include "WaveFileSpectrogramVisualizer.h"
 #include "WaveFile/Fourier.h"
 
-#include <QDebug>
-
 CWaveFileSpectrogramVisualizer::CWaveFileSpectrogramVisualizer(CWavFile *lpWf,
                                                                int channelNum,
+                                                               int dt,
                                                                WindowFunctions wfunc /* = WF_Rectangle*/) :
   m_lpWf(lpWf),
   m_channelNumber(channelNum),  
-  m_dt(DEFAULT_DT),
+  m_dt(dt),
   m_nDt(0),
   m_start_time(0.0),
   m_end_time(lpWf->RecordTimeSec()),
@@ -66,19 +66,13 @@ void CWaveFileSpectrogramVisualizer::InitChannelData(void)
       m_rChannelData[i] = (*start) * m_windows[i];
   }
 
-  for (int i = 0 ; i < m_real_len; ++i)
-    m_iChannelData[i] = 0.0;
-
-  for (int i = m_real_len; i < m_mem_len; ++i) {
-    m_rChannelData[i] = 0.0;
-    m_iChannelData[i] = 0.0;
-  }
+  memset(m_iChannelData, 0, m_mem_len * sizeof(double));
+  memset(&m_rChannelData[m_real_len], 0, (m_mem_len-m_real_len)*sizeof(double));
 }
 /////////////////////////////////////////////////////////////////////////
 
 void CWaveFileSpectrogramVisualizer::InitWindows(WindowFunctions wfunc)
-{
-  assert(m_windows == NULL);
+{  
   m_windows = new double[m_real_len];
   double (*lpFunc)(double, double) = CFftWindow::GetWindowFunc(wfunc);
   for (int i = 0 ; i < m_real_len; ++i)
@@ -89,7 +83,7 @@ void CWaveFileSpectrogramVisualizer::InitWindows(WindowFunctions wfunc)
 void CWaveFileSpectrogramVisualizer::InitFFTData(void)
 {
   m_dt = CFourier::NextPowerOfTwo(m_dt);
-  int n_fft = m_dt / 2;
+  int n_fft = m_dt >> 1;
   m_nDt = m_mem_len / m_dt;
   m_rTmp = new double[m_dt];
   m_iTmp = new double[m_dt];

@@ -20,9 +20,6 @@ void ChannelSpectrogramWidget::paintEvent(QPaintEvent *pe)
   QPainter painter;
   painter.begin(this);
 
-  for (int i = 0 ; i < this->size().width(); ++i) {
-
-  }
   painter.end();
 }
 /////////////////////////////////////////////////////////////////////////

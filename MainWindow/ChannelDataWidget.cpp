@@ -24,6 +24,7 @@ void ChannelDataWidget::paintEvent(QPaintEvent *e_paint)
   QFrame::paintEvent(e_paint);
   QPainter painter;
   painter.begin(this);    
+
   double coeff = (this->size().height() - 20)  / m_lpWfVis->ChannelMax();
   int median = this->size().height() >> 1;
 
@@ -32,6 +33,7 @@ void ChannelDataWidget::paintEvent(QPaintEvent *e_paint)
     int y1 = y0 + m_lpWfVis->ChannelsData()[i] * coeff;
     painter.drawLine(i, y0, i, y1);
   }
+
   painter.end();
 }
 //////////////////////////////////////////////////////////////////////////

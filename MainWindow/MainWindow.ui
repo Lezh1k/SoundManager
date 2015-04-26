@@ -19,7 +19,7 @@
      <layout class="QGridLayout" name="m_grdlChannels"/>
     </item>
     <item>
-     <layout class="QGridLayout" name="gridLayout"/>
+     <layout class="QGridLayout" name="m_grdlFourier"/>
     </item>
    </layout>
   </widget>

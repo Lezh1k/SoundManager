@@ -38,7 +38,10 @@ private:
   void InitFFTData(void);
 
 public:
-  explicit CWaveFileSpectrogramVisualizer(CWavFile* lpWf, int channelNum, WindowFunctions wfunc = WF_Rectangle);
+  explicit CWaveFileSpectrogramVisualizer(CWavFile* lpWf,
+                                          int channelNum,
+                                          int dt = DEFAULT_DT,
+                                          WindowFunctions wfunc = WF_Rectangle);
   ~CWaveFileSpectrogramVisualizer();  
 
   int PartsCount(void)  const {return m_nDt;}

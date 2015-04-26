@@ -6,6 +6,7 @@
 #include "ui_MainWindow.h"
 #include "ChannelDataWidget.h"
 #include "WaveFile/WaveFileSpectrogramVisualizer.h"
+#include "ChannelSpectrogramWidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -43,9 +44,15 @@ void MainWindow::ResetWavFile(const std::string &fileName)
   }
 
   for (int i = 0; i < m_wavFile->Header()->fmt.options.numChannels; ++i) {
-    CWavFileChannelVisualizer *visualizer = new CWavFileChannelVisualizer(m_wavFile, i);    
-    ChannelDataWidget* widget = new ChannelDataWidget(visualizer);    
+    CWavFileChannelVisualizer *visualizer = new CWavFileChannelVisualizer(m_wavFile, i);
+    ChannelDataWidget* widget = new ChannelDataWidget(visualizer);
+
+    CWaveFileSpectrogramVisualizer *sp_visualizer
+        = new CWaveFileSpectrogramVisualizer(m_wavFile, i);
+    ChannelSpectrogramWidget *sp_widget = new ChannelSpectrogramWidget(sp_visualizer);
+
     ui->m_grdlChannels->addWidget(widget, i, 0);
+    ui->m_grdlChannels->addWidget(sp_widget, i, 1);
   }
   ui->m_grdlChannels->invalidate();
 }

@@ -15,7 +15,7 @@ private:
 
   double *m_lpChannelData;
   word_t *m_lpVisChannelsData; //quantizied
-  double m_chanelMaxVal;  //abs(val) . to count mastab
+  double m_channelMaxVal;  //abs(val) . to count mastab
   int m_channelNumber;
   double m_timePerPixel;
 
@@ -44,7 +44,7 @@ public:
   double time_per_pixel() const {return m_timePerPixel;}
 
   word_t *ChannelsData() const {return m_lpVisChannelsData;}
-  double ChannelMax() const {return m_chanelMaxVal;}
+  double ChannelMax() const {return m_channelMaxVal;}
 
   double min_time() const {return 0.0;}
   double max_time() const {return m_lpWf->RecordTimeSec();}
